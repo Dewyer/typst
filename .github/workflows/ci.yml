@@ -3,10 +3,19 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo build --all
-      - run: cargo test --all
+      - name: Ensure line endings are all LF
+        run: |
+          git config --global core.eol lf
+          git config --global core.autocrlf input
+          git rm -rf --cached .
+          git reset --hard HEAD
+      - run: cargo build --workspace
+      - run: cargo test --workspace

@@ -1,6 +1,6 @@
 use std::cell::{RefCell, RefMut};
 use std::collections::HashMap;
-use std::env;
+use std::{env, thread};
 use std::ffi::OsStr;
 use std::fs::{self, File};
 use std::io::Read;
@@ -32,6 +32,17 @@ const FONT_DIR: &str = "../assets/fonts";
 const FILE_DIR: &str = "../assets/files";
 
 fn main() {
+    let builder = thread::Builder::new()
+        .stack_size(64*1024*1024);
+
+    let handler = builder.spawn(|| {
+        execute_tests();
+    }).unwrap();
+
+    handler.join().unwrap();
+}
+
+fn execute_tests() {
     let args = Args::new(env::args().skip(1));
     let mut filtered = Vec::new();
 
