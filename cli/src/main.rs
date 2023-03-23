@@ -64,6 +64,7 @@ OPTIONS:
 
 SUBCOMMANDS:
   --fonts        List all discovered system fonts
+  --show-ast     Show the typed syntax tree for a .typ file
 ";
 
 /// List discovered system fonts.
@@ -111,6 +112,10 @@ fn parse_args() -> StrResult<Command> {
 
         Command::Fonts(FontsCommand { variants: args.contains("--variants") })
     } else if args.contains("--show-ast") {
+        if help {
+            print_help(show_ast_command::HELP_SHOW_AST);
+        }
+
         let input: PathBuf = args.free_from_str().map_err(|_| "missing input file")?;
         Command::ShowAst(show_ast_command::ShowAstCommand { input })
     } else {
