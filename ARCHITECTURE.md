@@ -49,6 +49,13 @@ This is important because they are used pervasively throughout the compiler,
 also as input to memoized functions. The less they change, the better for
 incremental compilation.
 
+> You can view the typed syntax tree for a .typ file using the `--show-ast` 
+> command of the CLI.
+> 
+> Try it by running:
+> ```sh
+> cargo run -p typst-cli -- --show-ast tests/typ/text/baseline.typ
+> ```
 
 ## Evaluation
 The evaluation phase lives in `src/eval`. It takes a parsed `Source` file and

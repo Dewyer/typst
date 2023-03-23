@@ -25,6 +25,8 @@ use typst::util::{Buffer, PathExt};
 use typst::World;
 use walkdir::WalkDir;
 
+mod show_ast_command;
+
 type CodespanResult<T> = Result<T, CodespanError>;
 type CodespanError = codespan_reporting::files::Error;
 
@@ -32,6 +34,7 @@ type CodespanError = codespan_reporting::files::Error;
 enum Command {
     Compile(CompileCommand),
     Fonts(FontsCommand),
+    ShowAst(show_ast_command::ShowAstCommand),
 }
 
 /// Compile a .typ file into a PDF file.
@@ -107,6 +110,9 @@ fn parse_args() -> StrResult<Command> {
         }
 
         Command::Fonts(FontsCommand { variants: args.contains("--variants") })
+    } else if args.contains("--show-ast") {
+        let input: PathBuf = args.free_from_str().map_err(|_| "missing input file")?;
+        Command::ShowAst(show_ast_command::ShowAstCommand { input })
     } else {
         if help {
             print_help(HELP);
@@ -177,6 +183,7 @@ fn dispatch(command: Command) -> StrResult<()> {
     match command {
         Command::Compile(command) => compile(command),
         Command::Fonts(command) => fonts(command),
+        Command::ShowAst(command) => show_ast_command::show_ast(command),
     }
 }
 
